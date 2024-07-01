@@ -87,6 +87,10 @@ class SimulationParameters(metaclass=SingletonMeta):
         file_dir = os.path.join(self.DIR, f"run_{self.RUN_NUM}")
         file_path = os.path.join(file_dir, "config.json")
         os.makedirs(file_dir, exist_ok=True)
-        params_to_save = {field.name: getattr(self, field.name) for field in fields(self)}
+        params_to_save = {}
+        for field in fields(self):
+            value = getattr(self, field.name)
+            if isinstance(value, Enum):
+                value = value.value
         with open(file_path, 'w+') as json_file:
             json.dump(params_to_save, json_file, indent=4)
