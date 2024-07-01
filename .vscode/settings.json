@@ -1,12 +1,15 @@
 {
     "cSpell.words": [
+        "cbar",
         "cmax",
         "cmin",
         "colorscale",
+        "fontsize",
         "gifs",
         "griddata",
         "LBFGS",
         "mgrid",
+        "ndarray",
         "SOFTADAPT",
         "viridis",
         "vmax",

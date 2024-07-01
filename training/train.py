@@ -10,6 +10,7 @@ from loss.loss import Loss
 from pinn.pinn import PINN
 from training.params import SimulationParameters
 from visualization.plotting import plot_all, plot_running_average
+from visualization.saver import save_all
 
 logger = logging.getLogger()
 
@@ -46,7 +47,7 @@ class Training:
         loss_i = np.concatenate((loss_i, loss_i_lbfgs))
         loss_b = np.concatenate((loss_b, loss_b_lbfgs))
 
-        logging.info(f"Finished training in: {time.time() - start}")
+        logging.info(f"Finished training in: {time.strftime('%Hh %Mm %Ss', time.gmtime(time.time() - start))}")
         logging.info("Visualizing results")
         
         self.print_summary(loss_total[-1], loss_r[-1], loss_i[-1], loss_b[-1])
@@ -126,10 +127,7 @@ class Training:
     def visualize_results(self, losses: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
         save_path = os.path.join(self.params.DIR, f"run_{self.params.RUN_NUM}")
         self.plot_averages(losses)
-
-        os.makedirs(os.path.join(save_path, "img"), exist_ok=True)
-        plot_all(save_path, self.model, self.domain, self.initial_condition, 
-                 limit=(0, 2), limit_wave=(self.params.BASE_HEIGHT - self.params.PEAK_HEIGHT, self.params.BASE_HEIGHT + self.params.PEAK_HEIGHT))
+        save_all(save_path, self.model, self.domain, self.initial_condition)          
 
     def plot_averages(self, losses: Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
         save_path = os.path.join(self.params.DIR, f"run_{self.params.RUN_NUM}")

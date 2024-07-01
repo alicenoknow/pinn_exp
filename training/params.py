@@ -66,7 +66,7 @@ class SimulationParameters(metaclass=SingletonMeta):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def set_json(self, json_file):
+    def set_json(self, json_file: str):
         if json_file is None or not os.path.isfile(json_file):
             return
 
@@ -84,13 +84,12 @@ class SimulationParameters(metaclass=SingletonMeta):
         """
             Save parameters to run's directory.
         """
-        file_dir = os.path.join(self.DIR, f"run_{self.RUN_NUM}")
-        file_path = os.path.join(file_dir, "config.json")
-        os.makedirs(file_dir, exist_ok=True)
+        file_dir = os.path.join(self.DIR, f"run_{self.RUN_NUM}", "config.json")
         params_to_save = {}
         for field in fields(self):
             value = getattr(self, field.name)
             if isinstance(value, Enum):
                 value = value.value
-        with open(file_path, 'w+') as json_file:
+            params_to_save[field.name] = value
+        with open(file_dir, 'w+') as json_file:
             json.dump(params_to_save, json_file, indent=4)
