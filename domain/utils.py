@@ -24,7 +24,7 @@ def dump_points(filename: str):
 
     x = (x - min_x) / (max_x - min_x)
     y = (y - min_x) / (max_x - min_x)
-    z = (z-min_z) / (max_x - min_x)
+    z = (z - min_z) / (max_z - min_z)
 
     return x, y, z
 

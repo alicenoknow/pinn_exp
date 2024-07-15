@@ -34,7 +34,6 @@ def plot_all(save_path: str,
 
 
 def plot_all_from_file(save_path: str,
-             pinn: PINN,
              domain: Domain,
              limit: Tuple[float, float],
              limit_wave: Tuple[float, float]):
@@ -110,16 +109,15 @@ def _plot_initial_condition(z_true: np.ndarray,
 
     title = "Initial condition"
     n_points_plot = SimulationParameters().POINTS_PLOT
-    length = SimulationParameters().XY_DOMAIN[1]
 
     x, y, _ = domain.get_initial_points(n_points_plot, requires_grad=False)
     x, y = convert_to_numpy(x, n_points_plot), convert_to_numpy(y, n_points_plot)
 
     fig1 = plot_cmap(x, y, z_true, f"{title} - exact", limit=limit_wave)
-    fig2 = plot_3D_matplotlib(x, y, z_true, n_points_plot, length, domain,
+    fig2 = plot_3D_matplotlib(x, y, z_true, domain,
                    f"{title} - exact", limit=limit, limit_wave=limit_wave)
     fig3 = plot_cmap(x, y, z_pred, f"{title} - PINN", limit=limit_wave)
-    fig4 = plot_3D_matplotlib(x, y, z_pred, n_points_plot, length, domain,
+    fig4 = plot_3D_matplotlib(x, y, z_pred, domain,
                    f"{title} - PINN", limit=limit, limit_wave=limit_wave)
 
     c1, c2, c3, c4 = fig1.canvas, fig2.canvas, fig3.canvas, fig4.canvas
@@ -157,6 +155,8 @@ def plot_cmap(x: np.ndarray,
     ax.set_title(title, fontsize=18, pad=12)
     ax.set_xlabel("x", fontsize=16)
     ax.set_ylabel("y", fontsize=16)
+    ax.set_xticks([])
+    ax.set_yticks([])
 
     c = ax.pcolormesh(x, y, z, cmap=cmap, vmin=limit[0], vmax=limit[1])
     fig.colorbar(c, ax=ax)
@@ -166,8 +166,6 @@ def plot_cmap(x: np.ndarray,
 def plot_3D_matplotlib(x: np.ndarray, 
                         y: np.ndarray, 
                         z: np.ndarray,
-                        n_points_plot: int,
-                        length: int,
                         domain: Domain,
                         title: str, figsize=(8, 6),
                         limit: Tuple[float] = (0, 1),
@@ -178,10 +176,13 @@ def plot_3D_matplotlib(x: np.ndarray,
     ax.set_xlabel("x", fontsize=16)
     ax.set_ylabel("y", fontsize=16)
     ax.axes.set_zlim3d(bottom=limit[0], top=limit[1])
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_zticks([])
 
-    surf = ax.plot_surface(x, y, z, alpha=0.8, vmin=limit_wave[0], vmax=limit_wave[1], cmap="Blues_r")
+    surf = ax.plot_surface(x, y, z, alpha=0.9, vmin=limit_wave[0], vmax=limit_wave[1], cmap="Blues_r")
 
-    cbar = fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
+    cbar = fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5, pad=0.05)
     cbar.set_label('Water altitude', fontsize=14)
 
     if isinstance(domain, MeshDomain):
@@ -190,7 +191,7 @@ def plot_3D_matplotlib(x: np.ndarray,
                                   domain.z_raw,
                                   linewidth=0.2, alpha=0.8, cmap="plasma")
 
-        cbar_trisurf = fig.colorbar(trisurf, ax=ax, shrink=0.5, aspect=5, pad=0.1)
+        cbar_trisurf = fig.colorbar(trisurf, ax=ax, shrink=0.5, aspect=5, pad=0.15, location='left')
         cbar_trisurf.set_label('Terrain altitude', fontsize=14)
         cbar_trisurf.ax.yaxis.set_label_position('left')
         cbar_trisurf.ax.yaxis.set_ticks_position('left')
@@ -231,10 +232,11 @@ def plot_3D(x: np.ndarray, y: np.ndarray, z: np.ndarray,
     fig.update_layout(
         title=dict(text=title, font=dict(size=18)),
         scene=dict(
-            xaxis=dict(title=dict(text="x", font=dict(size=16))),
-            yaxis=dict(title=dict(text="y", font=dict(size=16))),
-            zaxis=dict(range=[limit[0], limit[1]], title=dict(text="z", font=dict(size=16))),
-            camera=dict(eye=eye)
+            xaxis=dict(title=dict(text="x", font=dict(size=16)), tickvals=[]),
+            yaxis=dict(title=dict(text="y", font=dict(size=16)), tickvals=[]),
+            zaxis=dict(range=[limit[0], limit[1]], tickvals=[], title=dict(text="z", font=dict(size=16))),
+            camera=dict(eye=eye),
+            aspectratio=dict(x=1, y=1, z=0.5)
         )
     )
 
@@ -246,7 +248,7 @@ def plot_3D(x: np.ndarray, y: np.ndarray, z: np.ndarray,
             opacity=1,
             intensity=domain.z_raw,
             colorscale='Plasma',
-            colorbar=dict(title=dict(text='Terrain altitude', font=dict(size=16, pad=10)), x=-0.1)
+            colorbar=dict(title=dict(text='Terrain altitude', font=dict(size=16)), x=-0.2),
         ))
 
     return fig

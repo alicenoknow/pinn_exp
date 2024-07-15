@@ -85,6 +85,8 @@ class SimulationParameters(metaclass=SingletonMeta):
             Save parameters to run's directory.
         """
         file_dir = os.path.join(self.DIR, f"run_{self.RUN_NUM}", "config.json")
+        os.makedirs(os.path.join(self.DIR, f"run_{self.RUN_NUM}"), exist_ok=True)
+
         params_to_save = {}
         for field in fields(self):
             value = getattr(self, field.name)

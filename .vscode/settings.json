@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "aspectratio",
         "cbar",
         "cmax",
         "cmin",
@@ -11,11 +12,15 @@
         "mgrid",
         "ndarray",
         "SOFTADAPT",
+        "tickvals",
         "viridis",
         "vmax",
         "vmin",
         "xaxis",
+        "xticks",
         "yaxis",
-        "zaxis"
+        "yticks",
+        "zaxis",
+        "zticks"
     ]
 }

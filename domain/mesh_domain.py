@@ -32,7 +32,7 @@ class MeshDomain(Domain):
         - t0: [[0], [0], ...] size: (n_points x n_points) x 1
         """
         if n_points:
-            x_linspace, y_linspace, _ = self._generate_linespaces_n(n_points, requires_grad)
+            x_linspace, y_linspace, _ = self._generate_linespaces_n(n_points)
             x_grid, y_grid = torch.meshgrid(x_linspace, y_linspace, indexing="ij")
             x_grid = self._reshape_and_to_device(x_grid, requires_grad)
             y_grid = self._reshape_and_to_device(y_grid, requires_grad)
